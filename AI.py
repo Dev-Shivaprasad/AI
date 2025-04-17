@@ -1,6 +1,6 @@
 from gpt4all import GPT4All
 
-MODEL_PATH = "M:/0~CODEBASE/PYTHON/AI(API)/Models/phi-2-orange.Q8_0.gguf"
+MODEL_PATH = r"M:\0~CODEBASE\All_AI_Models\phi-2-orange.Q8_0.gguf"
 
 try:
     model = GPT4All(model_name=MODEL_PATH, device="cuda", allow_download=False, verbose=True)
@@ -15,8 +15,8 @@ def AnalyzeFinancialData(Finance_Data):
         return {"message": "❌ Model not loaded. Please check server logs."}
 
     prompt = f"""You are a smart and helpful financial advisor.
-Analyze the user's financial data below and suggest improvements to help them make better economic decisions.
-and provide the output in markdown syntax
+Analyze the user's financial data below and suggest improvements to help them make better economic decisions, Start the output by saying Based on the provided financial data, here are some suggestions to help you make better economic decisions and manage your finances more effectively:
+
 
 Financial Data:
 {Finance_Data}

@@ -2,8 +2,6 @@
 from AI import AnalyzeFinancialData
 from pydantic import BaseModel
 
-# print(Generate("what is the sum of 100 + 100"))
-
 class Promptschema(BaseModel):
     Prompt: str
 
@@ -17,7 +15,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["POST", "GET"],
-    allow_headers=["*"],
+    allow_headers=["application/JSON"],
 )
 
 @app.get("/")
