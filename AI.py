@@ -1,43 +1,45 @@
 from gpt4all import GPT4All
 
-ModelPath = r"M:\0~CODEBASE\PYTHON\AI(API)\Models\FinGPT-MT-Llama-3-8B-LoRA-Q4_K_M.gguf"
+MODEL_PATH = "M:/0~CODEBASE/PYTHON/AI(API)/Models/phi-2-orange.Q8_0.gguf"
 
-available_gpus = GPT4All.list_gpus()
-print(f"Available GPUs: {available_gpus}")
-
-# Try loading the model
 try:
-    model = GPT4All(model_name=ModelPath, device="cuda", allow_download=False, verbose=True)
+    model = GPT4All(model_name=MODEL_PATH, device="cuda", allow_download=False, verbose=True)
     print("✅ Model loaded successfully!")
 except Exception as e:
     print(f"❌ Failed to load model: {e}")
     model = None
 
-def Generate(Prompt: str):
+def AnalyzeFinancialData(Finance_Data):
+
     if model is None:
-        return {"message": "Model not loaded. Please check server logs."}
+        return {"message": "❌ Model not loaded. Please check server logs."}
 
+    prompt = f"""You are a smart and helpful financial advisor.
+Analyze the user's financial data below and suggest improvements to help them make better economic decisions.
+and provide the output in markdown syntax
+
+Financial Data:
+{Finance_Data}
+
+Tips:"""
     try:
-        with model.chat_session() as chat:
-            response = chat.generate(
-                prompt=Prompt,
-                max_tokens=600,
-                temp=0.3,
+        with model.chat_session():
+            response =model.generate(
+                prompt=prompt,
+                temp=0.4,
+                top_k=50,
+                top_p=0.95,
                 repeat_penalty=1.1,
+                n_predict=512
             )
-        
-        if not response or response.strip() == "":
-            return {"message": "❌ Model generated an empty response. Please try again."}
 
-        # Clean response
-        clean_response = response.replace('\\n', '\n').replace('\\"', '"').strip()
-           
-        # Remove unnecessary prefixes if exist
-        for unwanted in ["Assistant:", "User:"]:
-            if unwanted in clean_response:
-                clean_response = clean_response.split(unwanted)[-1].strip()
-
+        clean_response = response.strip().replace("\\n", "\n")
         return {"message": clean_response}
+
     except Exception as e:
-        print(f"❌ Exception during generation: {e}")
+        print(f"❌ Error during generation: {e}")
         return {"message": f"❌ Error: {e}"}
+if __name__ == "__main__":
+    financial_data = "Amount 100000.00 Indian Rupees Owed To SBI at interest rate of 9.3 percent(%) before 86 days Amount 1200.00 Indian Rupees Owed To Kishor at interest rate of 1 percent(%) before 100 days  Spent 8000.00 Indian Rupees on ration and it is a fixed expense, Spent 12000.00 Indian Rupees on Service and it is not a fixed expense, Income of 20000.00 Indian Rupees from job and it is not a fixed income, Invested 500.00 Indian Rupees into stocks, Started saving for Car which costs 10000000.00 Indian Rupees. Till now I have saved 50000.00 Indian Rupees"
+    analysis_result = AnalyzeFinancialData(financial_data)
+    print(analysis_result["message"])

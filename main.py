@@ -1,5 +1,5 @@
 
-from AI import Generate
+from AI import AnalyzeFinancialData
 from pydantic import BaseModel
 
 # print(Generate("what is the sum of 100 + 100"))
@@ -24,8 +24,9 @@ app.add_middleware(
 def DefaultRoute():
     return "Welcome to AI"
 
-@app.post("/api/AccessAI/")
-def Gen(data: Promptschema = Body(...)):
-    RES =Generate(data.Prompt)
+@app.post("/api/AnalyzeFinancialData/")
+async def Gen(data: Promptschema = Body(...)):
+    # jsondata = json.loads(data.Prompt)
+    RES =await AnalyzeFinancialData(data.Prompt)
     print(f"Successful!!!")
     return RES
